@@ -1,5 +1,6 @@
 package com.example.dbbrowser.service;
 
+import com.example.dbbrowser.configuration.MySqlConnecter;
 import com.example.dbbrowser.dto.ConnectionProperties;
 import com.example.dbbrowser.exceptions.PropertyNotFoundException;
 import com.example.dbbrowser.repository.ConnectionPropertiesRepository;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -20,10 +21,11 @@ import org.springframework.stereotype.Service;
 public class ConnectionPropertiesServiceImpl implements ConnectionPropertiesService {
     private final ConnectionPropertiesRepository propertiesRepository;
 
+    @Autowired
+    private final MySqlConnecter mySqlConnecter;
+
     @Override
     public ConnectionProperties save(ConnectionProperties properties) {
-        // TODO: validate fields of newProperties, such as port etc
-
         return propertiesRepository.save(properties);
     }
 
@@ -58,14 +60,9 @@ public class ConnectionPropertiesServiceImpl implements ConnectionPropertiesServ
     @Override public List<String> findAllSchemas() {
         List<String> response = new ArrayList<>();
         List<ConnectionProperties> properties = propertiesRepository.findAll();
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
         properties.forEach(prop -> {
-            dataSourceBuilder.url(prop.getHostname());
-            dataSourceBuilder.username(prop.getUsername());
-            dataSourceBuilder.password(prop.getPassword());
             try {
-                Connection connection = dataSourceBuilder.build().getConnection();
+                Connection connection = mySqlConnecter.createConnection(prop);
                 DatabaseMetaData databaseMetaData = connection.getMetaData();
                 ResultSetMetaData schemas = databaseMetaData.getSchemas().getMetaData();
                 for (int i = 0; i < schemas.getColumnCount(); i++) {
@@ -73,6 +70,7 @@ public class ConnectionPropertiesServiceImpl implements ConnectionPropertiesServ
                 }
             }
             catch (SQLException throwables) {
+                log.error("Unable to get schema on connection: " + prop);
                 throwables.printStackTrace();
             }
         });

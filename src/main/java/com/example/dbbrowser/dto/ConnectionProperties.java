@@ -27,4 +27,10 @@ public class ConnectionProperties{
     String username;
 
     String password;
+
+    @Override
+    public String toString(){
+        return "database instance: " + name + ", hostname: " + hostname + ", port: " + port + ", " +
+            ", database name: " + dbname + ", username: " + username + ", password: " + password;
+    }
 }

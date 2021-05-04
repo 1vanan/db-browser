@@ -1,7 +1,6 @@
 package com.example.dbbrowser.controller;
 
 import com.example.dbbrowser.dto.ConnectionProperties;
-import com.example.dbbrowser.dto.Schema;
 import com.example.dbbrowser.exceptions.PropertyVerificationException;
 import com.example.dbbrowser.service.ConnectionPropertiesService;
 import java.util.List;
