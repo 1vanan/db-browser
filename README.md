@@ -2,7 +2,6 @@ Web based database browser application.
 
 Technologies:
 
-Back
 * Java 8
 * Spring Boot
 * H2 in-memory database

@@ -1,6 +1,7 @@
 package com.example.dbbrowser.controller;
 
 import com.example.dbbrowser.dto.ConnectionProperties;
+import com.example.dbbrowser.dto.Schema;
 import com.example.dbbrowser.exceptions.PropertyVerificationException;
 import com.example.dbbrowser.service.ConnectionPropertiesService;
 import java.util.List;
@@ -70,5 +71,12 @@ public class BrowserController implements BrowserApi {
         if (!portPattern.matcher(properties.getPort()).matches()) {
             PropertyVerificationException.PropertyVerificationException("port", properties.getPort());
         }
+    }
+
+    @Override
+    @GetMapping("/schemas")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> listSchemas() {
+        return propertiesService.findAllSchemas();
     }
 }

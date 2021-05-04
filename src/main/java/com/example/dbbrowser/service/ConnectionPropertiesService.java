@@ -12,4 +12,8 @@ public interface ConnectionPropertiesService {
     ConnectionProperties updateProperties(ConnectionProperties properties);
 
     void deleteProperties(Long id);
+
+    List<String> findAllSchemas();
+
+
 }
