@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BrowserControllerTest extends DbBrowserAbstractTest {
-    @Value("http://localhost:${local.server.port}/ataccama/db-browser/properties")
+    @Value("http://localhost:${local.server.port}/ataccama/db-browser/connections")
     private String baseUrl;
     @Autowired
     private MockMvc mvc;

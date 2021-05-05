@@ -1,15 +1,25 @@
 package com.example.dbbrowser.service;
 
-import com.example.dbbrowser.configuration.MySqlConnecter;
+import com.example.dbbrowser.dto.Record;
+import com.example.dbbrowser.dto.TableColumn;
+import com.example.dbbrowser.dto.TableRecord;
+import com.example.dbbrowser.exceptions.UnableLoadDbException;
+import com.example.dbbrowser.utils.PostgressqlConnecter;
 import com.example.dbbrowser.dto.ConnectionProperties;
+import com.example.dbbrowser.dto.Table;
 import com.example.dbbrowser.exceptions.PropertyNotFoundException;
 import com.example.dbbrowser.repository.ConnectionPropertiesRepository;
+import com.example.dbbrowser.utils.MetadataParser;
+import com.example.dbbrowser.utils.TableViewParser;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +30,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConnectionPropertiesServiceImpl implements ConnectionPropertiesService {
     private final ConnectionPropertiesRepository propertiesRepository;
-
-    @Autowired
-    private final MySqlConnecter mySqlConnecter;
 
     @Override
     public ConnectionProperties save(ConnectionProperties properties) {
@@ -55,25 +62,5 @@ public class ConnectionPropertiesServiceImpl implements ConnectionPropertiesServ
         propertiesRepository.findById(id)
             .orElseThrow(() -> new PropertyNotFoundException("deletion failed on id: " + id));
         propertiesRepository.deleteById(id);
-    }
-
-    @Override public List<String> findAllSchemas() {
-        List<String> response = new ArrayList<>();
-        List<ConnectionProperties> properties = propertiesRepository.findAll();
-        properties.forEach(prop -> {
-            try {
-                Connection connection = mySqlConnecter.createConnection(prop);
-                DatabaseMetaData databaseMetaData = connection.getMetaData();
-                ResultSetMetaData schemas = databaseMetaData.getSchemas().getMetaData();
-                for (int i = 0; i < schemas.getColumnCount(); i++) {
-                    response.add(schemas.getSchemaName(i));
-                }
-            }
-            catch (SQLException throwables) {
-                log.error("Unable to get schema on connection: " + prop);
-                throwables.printStackTrace();
-            }
-        });
-        return response;
     }
 }

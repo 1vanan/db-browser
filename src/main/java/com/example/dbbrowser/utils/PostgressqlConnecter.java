@@ -1,4 +1,4 @@
-package com.example.dbbrowser.configuration;
+package com.example.dbbrowser.utils;
 
 import com.example.dbbrowser.dto.ConnectionProperties;
 import com.example.dbbrowser.exceptions.UnableConnectionException;
@@ -8,14 +8,14 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MySqlConnecter {
+public class PostgressqlConnecter {
 
     public Connection createConnection(ConnectionProperties properties) {
 
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("com.mysql.cj.jdbc.Driver");
+        dataSourceBuilder.driverClassName("org.postgresql.Driver");
 
-        dataSourceBuilder.url("jdbc:mysql://" + properties.getHostname() + ":"
+        dataSourceBuilder.url("jdbc:postgresql://" + properties.getHostname() + ":"
             + properties.getPort() + "/" + properties.getDbname());
         dataSourceBuilder.username(properties.getUsername());
         dataSourceBuilder.password(properties.getPassword());

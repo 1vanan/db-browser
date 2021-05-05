@@ -5,6 +5,7 @@ Technologies:
 * Java 8
 * Spring Boot
 * H2 in-memory database
+* PostgresSql
 * Spring Data  
 * REST API
 * Maven
