@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DbBrowsingServiceImpl implements DbBrowsingService{
+public class DbBrowsingServiceImpl implements DbBrowsingService {
     private final ConnectionPropertiesRepository propertiesRepository;
 
     @Autowired
@@ -41,12 +41,9 @@ public class DbBrowsingServiceImpl implements DbBrowsingService{
 
     @Override public List<String> findAllSchemas(Long id) {
         List<String> response = new ArrayList<>();
-        ConnectionProperties prop = propertiesRepository.findById(id).orElseGet(() -> {
-            PropertyNotFoundException.PropertyNotFoundException(id.toString());
-            return null;
-        });
-        Connection connection = postgressqlConnecter.createConnection(prop);
-        try {
+        ConnectionProperties prop = getPropertiesIfExist(id);
+
+        try (Connection connection = postgressqlConnecter.createConnection(prop)) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSetMetaData schemas = databaseMetaData.getSchemas().getMetaData();
             for (int i = 0; i < schemas.getColumnCount(); i++) {
@@ -62,13 +59,9 @@ public class DbBrowsingServiceImpl implements DbBrowsingService{
 
     @Override public List<Table> findAllTables(Long id, Optional<String> schema) {
         List<Table> response = new ArrayList<>();
-        ConnectionProperties prop = propertiesRepository.findById(id).orElseGet(() -> {
-            PropertyNotFoundException.PropertyNotFoundException(id.toString());
-            return null;
-        });
+        ConnectionProperties prop = getPropertiesIfExist(id);
 
-        Connection connection = postgressqlConnecter.createConnection(prop);
-        try {
+        try (Connection connection = postgressqlConnecter.createConnection(prop)) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSet tables;
             if (schema.isPresent()) {
@@ -82,21 +75,18 @@ public class DbBrowsingServiceImpl implements DbBrowsingService{
             response.addAll(metadataParser.readTables(tables));
         }
         catch (SQLException throwables) {
-            UnableLoadDbException.UnableLoadDbException("Failed to get tables metadata on connection: " + connection);
+            UnableLoadDbException.UnableLoadDbException("Failed to get table columns metadata on connection " +
+                "with properties: " + id);
         }
         return response;
     }
 
     @Override public List<TableColumn> listTableColumns(Long id, Optional<String> schema, Optional<String> table) {
         List<TableColumn> response = new ArrayList<>();
-        ConnectionProperties prop = propertiesRepository.findById(id).orElseGet(() -> {
-            PropertyNotFoundException.PropertyNotFoundException(id.toString());
-            return null;
-        });
-        Connection connection = postgressqlConnecter.createConnection(prop);
-        DatabaseMetaData databaseMetaData;
-        try {
-            databaseMetaData = connection.getMetaData();
+        ConnectionProperties prop = getPropertiesIfExist(id);
+
+        try (Connection connection = postgressqlConnecter.createConnection(prop)) {
+            DatabaseMetaData databaseMetaData = connection.getMetaData();
             ResultSet columns = databaseMetaData.getColumns(
                 null, schema.isPresent() ? schema.get() : null,
                 table.isPresent() ? table.get() : null, null);
@@ -104,7 +94,8 @@ public class DbBrowsingServiceImpl implements DbBrowsingService{
             response = metadataParser.readColumns(columns);
         }
         catch (SQLException throwables) {
-            UnableLoadDbException.UnableLoadDbException("Failed to get table columns metadata on connection: " + connection);
+            UnableLoadDbException.UnableLoadDbException("Failed to get table columns metadata on connection " +
+                "with properties: " + id);
 
         }
         return response;
@@ -114,22 +105,25 @@ public class DbBrowsingServiceImpl implements DbBrowsingService{
         Optional<String> limit) {
         List<TableRecord> tableRecords = new ArrayList<>();
         String viewQuery = viewParser.createViewQuery(schema, table, limit, orderBy);
-        ConnectionProperties prop = propertiesRepository.findById(id).orElseGet(() -> {
-            PropertyNotFoundException.PropertyNotFoundException(id.toString());
-            return null;
-        });
+        ConnectionProperties prop = getPropertiesIfExist(id);
 
-        Connection connection = postgressqlConnecter.createConnection(prop);
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
+        try (Connection connection = postgressqlConnecter.createConnection(prop)) {
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(viewQuery);
             tableRecords.addAll(viewParser.parseView(result));
         }
         catch (SQLException throwables) {
-            UnableLoadDbException.UnableLoadDbException("Failed to get table values on connection: " + connection);
+            UnableLoadDbException.UnableLoadDbException("Failed to get table columns metadata on connection " +
+                "with properties: " + id);
         }
 
         return tableRecords;
+    }
+
+    private ConnectionProperties getPropertiesIfExist(Long id) {
+        return propertiesRepository.findById(id).orElseGet(() -> {
+            PropertyNotFoundException.PropertyNotFoundException(id.toString());
+            return null;
+        });
     }
 }

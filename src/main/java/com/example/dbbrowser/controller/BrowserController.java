@@ -1,7 +1,6 @@
 package com.example.dbbrowser.controller;
 
 import com.example.dbbrowser.dto.ConnectionProperties;
-import com.example.dbbrowser.dto.Record;
 import com.example.dbbrowser.dto.Table;
 import com.example.dbbrowser.dto.TableColumn;
 import com.example.dbbrowser.dto.TableRecord;

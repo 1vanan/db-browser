@@ -2,15 +2,18 @@ package com.example.dbbrowser;
 
 import com.example.dbbrowser.dto.ConnectionProperties;
 
+/*
+Test data for all test cases.
+ */
 public abstract class DbBrowserAbstractTest {
 
-    protected final String NAME1 = "instance_name";
+    protected static final String NAME1 = "instance_name";
     //change hostname in case if it doesn't match pattern from @BrowserController
     protected final String HOST_NAME1 = "localhost";
     protected final String PORT1 = "8080";
     protected final String DB_NAME1 = "db_name";
-    protected final String USERNAME1 = "John";
-    protected final String PASSWORD1 = "veryStrongpaSsWord123!";
+    protected static final String USERNAME1 = "John";
+    protected static final String PASSWORD1 = "veryStrongpaSsWord123!";
 
     protected final String NAME2 = "another_instance_name";
     //change hostname in case if it doesn't match pattern from @BrowserController

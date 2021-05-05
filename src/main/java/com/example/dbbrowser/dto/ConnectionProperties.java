@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConnectionProperties{
+public class ConnectionProperties {
     @Id
     @GeneratedValue
     Long id;
@@ -29,7 +29,7 @@ public class ConnectionProperties{
     String password;
 
     @Override
-    public String toString(){
+    public String toString() {
         return "database instance: " + name + ", hostname: " + hostname + ", port: " + port + ", " +
             ", database name: " + dbname + ", username: " + username + ", password: " + password;
     }

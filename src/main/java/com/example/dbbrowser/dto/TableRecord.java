@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/*
+Record of whole table in @TableRecord.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

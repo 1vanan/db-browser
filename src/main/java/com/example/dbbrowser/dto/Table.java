@@ -3,6 +3,9 @@ package com.example.dbbrowser.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/*
+Table metadata.
+ */
 @Data
 @AllArgsConstructor
 public class Table {
@@ -10,5 +13,5 @@ public class Table {
     private String tableType;
     private String catalogName;
     private String schemaName;
-    private String remarks;
+    private String comments;
 }

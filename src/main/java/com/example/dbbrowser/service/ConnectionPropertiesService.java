@@ -1,12 +1,11 @@
 package com.example.dbbrowser.service;
 
 import com.example.dbbrowser.dto.ConnectionProperties;
-import com.example.dbbrowser.dto.Table;
-import com.example.dbbrowser.dto.TableColumn;
-import com.example.dbbrowser.dto.TableRecord;
 import java.util.List;
-import java.util.Optional;
 
+/*
+Performs CRUD operations.
+ */
 public interface ConnectionPropertiesService {
 
     ConnectionProperties save(ConnectionProperties properties);

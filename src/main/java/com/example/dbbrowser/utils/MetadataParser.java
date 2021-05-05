@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +15,8 @@ public class MetadataParser {
     private static final String CATALOG_NAME = "TABLE_CAT";
     private static final String TABLE_NAME = "TABLE_NAME";
     private static final String TABLE_TYPE = "TABLE_TYPE";
-    private static final String REMARKS = "REMARKS";
+    //not sure how to get comment on table/column. Either this or "COMMENT"
+    private static final String COMMENTS = "REMARKS";
     private static final String COLUMN_NAME = "COLUMN_NAME";
     private static final String DATA_TYPE = "DATA_TYPE";
     private static final String POSITION = "ORDINAL_POSITION";
@@ -32,7 +32,7 @@ public class MetadataParser {
                 String tableType = loadedDbInfo.getString(TABLE_TYPE);
                 String catalogName = loadedDbInfo.getString(CATALOG_NAME);
                 String schemaName = loadedDbInfo.getString(SCHEMA_NAME);
-                String remarks = loadedDbInfo.getString(REMARKS);
+                String remarks = loadedDbInfo.getString(COMMENTS);
                 loadedTables.add(new Table(tableName, tableType, catalogName,
                     schemaName, remarks));
             }
@@ -54,7 +54,7 @@ public class MetadataParser {
                 String position = loadedDbInfo.getString(POSITION);
                 String defaultValue = loadedDbInfo.getString(DEFAULT_VALUE);
                 String nullable = loadedDbInfo.getString(NULLABLE);
-                String remarks = loadedDbInfo.getString(REMARKS);
+                String remarks = loadedDbInfo.getString(COMMENTS);
                 loadedTableColumns
                     .add(new TableColumn(tableName, columnName, position,
                         defaultValue, nullable, dataType,

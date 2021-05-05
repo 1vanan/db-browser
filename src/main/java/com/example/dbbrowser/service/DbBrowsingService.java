@@ -6,6 +6,9 @@ import com.example.dbbrowser.dto.TableRecord;
 import java.util.List;
 import java.util.Optional;
 
+/*
+Performs Metadata search operations.
+ */
 public interface DbBrowsingService {
 
     List<String> findAllSchemas(Long id);
